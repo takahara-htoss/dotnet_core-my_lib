@@ -8,4 +8,13 @@
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Update="UI\フォーカスすると全選択するテキストボックス.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="UI\フォーカスすると全選択する日付対応テキストボックス.cs">
+      <SubType>Component</SubType>
+    </Compile>
+  </ItemGroup>
+
 </Project>
