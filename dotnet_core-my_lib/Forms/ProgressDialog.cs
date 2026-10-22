@@ -10,44 +10,68 @@ namespace dotnet_core_my_lib.Forms
     /*
      使い方の例
      コール元で
-        var pDlg = new Common.ProgressDialog2(this);
-        ProgressDialogResult result = await pDlg.ShowAsync(
-            
-            // これはラムダ式でcancellationToken、progressはShowAsync()で匿名定義されたあとに、メソッド内で実装されています。
-            async (cancellationToken, progress) =>
-            {
-                // asyncにしたからと言って自動でサブスレッドで実行はされないので以下のブロックは必須です。
-                return await Task.Run(() =>
+        private async Task TreeViewの子ノードを再生成する(RadioButton radio)
+        {
+            listView社員情報.Items.Clear(); // ツリービューの子ノードを再生成する前に、ListViewの社員情報をクリアします。
+
+            ProgressDialog pDlg = new(this);
+            List<Dictionary<string, string>> dictionaryList = await pDlg.ShowAsync(
+                async (cancellationToken, progress) =>
                 {
-                    return RadioButtonによりTreeViewのデータを取得する(radio, progress, cancellationToken);
-                });
-            },
-            "データを取得中...",
-            allowCancel: true,
-            title: "ツリーの再生成"
-        );
+                    return await Task.Run(() =>
+                    {
+                        // タスクメソッドをサブスレッドで実行します。
+                        return RadioButtonによりTreeViewのデータを取得する(radio, progress, cancellationToken);
+                    });
+                },
+                "データを取得中...",
+                allowCancel: true,
+                title: "ツリーの再生成"
+            );
+
+            ...
+        }
 
         そして親のタスク（処理）の中身
-        private ProgressDialogResult RadioButtonによりTreeViewのデータを取得する(RadioButton radio, IProgress<string> progress, CancellationToken token)
+        private List<Dictionary<string, string>> RadioButtonによりTreeViewのデータを取得する(RadioButton radio, IProgress<string> progress, CancellationToken token)
         {
+            var dictionaryList = new List<Dictionary<string, string>>();
+
+            int skub = ラジオボタンから社員区分を取得する(radio);
+            string 追加の検索条件 = 追加の検索条件を取得して返す();
+
             progress.Report("カナ順を作成中");
             // コール元でdictionaryListの配列要素順序を利用するので、ここで順序を意識して追加する必要があります。
-            dictionaryList.Add(Mew1No2.社員区分からカナ順の五十音行コードと五十音順行文字セットを取得する(skub));
+            dictionaryList.Add(Mew1No2.社員区分からカナ順の五十音行コードと五十音順行文字セットを取得する(skub, false, 追加の検索条件));
             if (token.IsCancellationRequested)
                 // ユーザーがキャンセルボタンを押しましたので途中の状態で抜けます。
-                return new ProgressDialogResult(dictionaryList, 警告メッセージ);
+                return dictionaryList;
 
             progress.Report("店舗カナ順を作成中");
             bool 店舗カナ順 = true;
-            dictionaryList.Add(Mew1No2.社員区分からカナ順の五十音行コードと五十音順行文字セットを取得する(skub, 店舗カナ順));
+            dictionaryList.Add(Mew1No2.社員区分からカナ順の五十音行コードと五十音順行文字セットを取得する(skub, 店舗カナ順, 追加の検索条件));
             if (token.IsCancellationRequested)
-                return new ProgressDialogResult(dictionaryList, 警告メッセージ);
+                return dictionaryList;
 
             progress.Report("HPID順を作成中");
-            var dict = Mew1No2.社員区分からGYN3を昇順で取得する(skub);
-            dictionaryList.Add(dict);
+            var dictHpid = Mew1No2.社員区分からHPID順を昇順で取得する(skub, 追加の検索条件);
+            dictionaryList.Add(dictHpid);
             if (token.IsCancellationRequested)
-                return new ProgressDialogResult(dictionaryList, 警告メッセージ);
+                return dictionaryList;
+
+            progress.Report("アドレス順を作成中");
+            var dictAddress = Mew1No2.社員区分からアドレス順を昇順で取得する(skub, 追加の検索条件);
+            dictionaryList.Add(dictAddress);
+            if (token.IsCancellationRequested)
+                return dictionaryList;
+
+            progress.Report("iモードアドレス順を作成中");
+            var dictImodeAddress = Mew1No2.社員区分からiモードアドレス順を昇順で取得する(skub, 追加の検索条件);
+            dictionaryList.Add(dictImodeAddress);
+            if (token.IsCancellationRequested)
+                return dictionaryList;
+
+            return dictionaryList;
         }
 
         ちなみに親フォーム画面のEnable制御はこのクラスで実装しているので親が実装する必要はありません。
