@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace dotnet_core_my_lib.UI
 {
+    [Obsolete("VB6の移植で作ってしまいましたが、これを実装するならDataGridViewを使用してください。", false)]
     public class リストビューのヘッダーにソートを実装
     {
         private int sortColumn = -1;

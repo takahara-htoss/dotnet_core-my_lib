@@ -9,14 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="File\Csv\CsvFilereader.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="File\Csv\CsvFileReader.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Update="UI\フォーカスすると全選択するテキストボックス.cs">
       <SubType>Component</SubType>
     </Compile>
