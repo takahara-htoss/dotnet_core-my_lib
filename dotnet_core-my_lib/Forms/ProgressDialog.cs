@@ -32,7 +32,7 @@ namespace dotnet_core_my_lib.Forms
             ...
         }
 
-        そして親のタスク（処理）の中身
+        そしてタスクメソッド（処理）の中身
         private List<Dictionary<string, string>> RadioButtonによりTreeViewのデータを取得する(RadioButton radio, IProgress<string> progress, CancellationToken token)
         {
             var dictionaryList = new List<Dictionary<string, string>>();
