@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentFTP" Version="54.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="UI\フォーカスすると全選択するテキストボックス.cs">
       <SubType>Component</SubType>
     </Compile>

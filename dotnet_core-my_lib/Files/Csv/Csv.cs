@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace dotnet_core_my_lib.File.Csv
+namespace dotnet_core_my_lib.Files.Csv
 {
     public class Csv
     {
@@ -59,13 +59,14 @@ namespace dotnet_core_my_lib.File.Csv
         /// </summary>
         /// <param name="encodingName"></param>
         /// <param name="maxLines">読み込む最大行数。nullの場合は制限なし。</param>
+        /// <param name="行内の全列を1列としてソートする">あまりに列数が多い場合は行全体を1列としてソートしなるべくユニークに近い形にする</param>
         /// <returns></returns>
         /// <exception cref="FileNotFoundException"></exception>
-        public ImmutableArray<ImmutableArray<string>> 親が行で子が列の二次元配列として返す(string encodingName = "UTF-8", int? maxLines = null)
+        public ImmutableArray<ImmutableArray<string>> 親が行で子が列の二次元配列として返す(string encodingName = "UTF-8", int? maxLines = null, bool 行内の全列を1列としてソートする = false)
         {
             if (!IsExist)
                 throw new FileNotFoundException($"CSV file not found: {_path}");
-            var lines = new List<ImmutableArray<string>>();
+            var lines = new List<string>();
             using (var reader = new StreamReader(_path, Encoding.GetEncoding(encodingName)))
             {
                 int lineCount = 0;
@@ -75,12 +76,24 @@ namespace dotnet_core_my_lib.File.Csv
                         break;
 
                     string line = reader.ReadLine() ?? "";
-                    var fields = line.Split(',').Select(field => field.Trim()).ToImmutableArray();
-                    lines.Add(fields);
+                    lines.Add(line);
                     lineCount++;
                 }
             }
-            return lines.ToImmutableArray();
+
+            var result = new List<ImmutableArray<string>>();
+            if (行内の全列を1列としてソートする)
+            {
+                lines.Sort();
+            }
+
+            foreach (var line in lines)
+            {
+                var fields = line.Split(',').Select(field => field.Trim()).ToImmutableArray();
+                result.Add(fields);
+            }
+
+            return result.ToImmutableArray();
         }
     }
 }
