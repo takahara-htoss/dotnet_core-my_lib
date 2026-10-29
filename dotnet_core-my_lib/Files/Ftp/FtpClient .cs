@@ -33,6 +33,46 @@ namespace dotnet_core_my_lib.Files.Ftp
         }
 
         /// <summary>
+        /// 複数のアップロードを一つのアップロードフォルダにまとめて行う
+        /// 未テストなのでワンセッションで送るかどうかは不明です。
+        /// </summary>
+        /// <param name="localFiles"></param>
+        /// <param name="remoteDir"></param>
+        /// <exception cref="InvalidOperationException"></exception>
+        public void UploadFiles(IEnumerable<FileInfo> localFiles, string remoteDir)
+        {
+            if (!_ftpClient.IsConnected)
+            {
+                _ftpClient.AutoConnect();
+            }
+
+            List<FtpResult> results = _ftpClient.UploadFiles(localFiles, remoteDir, FtpRemoteExists.Overwrite);
+            List<string> failedMsgs = [];
+            foreach (FtpResult? result in results)
+            {                
+                if (result != null)
+                {
+                    if (result.IsFailed)
+                    {
+                        failedMsgs.Add($"ファイル: {result.LocalPath} のアップロードに失敗しました。ファイルパス: {result.LocalPath}");
+                    }
+                    else if (result.IsSkipped)
+                    {
+                        failedMsgs.Add($"ファイル: {result.LocalPath} のアップロードはスキップされました。ファイルパス: {result.LocalPath}");
+                    }
+                    else if (!result.IsSuccess)
+                    {
+                        failedMsgs.Add($"ファイル: {result.LocalPath} のアップロードは成功以外でした。ファイルパス: {result.LocalPath}");
+                    }
+                }
+            }
+            if (failedMsgs.Count > 0)
+            {
+                throw new InvalidOperationException($"FTPアップロードに失敗しました。詳細: {string.Join(", ", failedMsgs)}");
+            }
+        }
+
+        /// <summary>
         /// ファイルをアップロードする
         /// </summary>
         public void UploadFile(string localFilePath, string remoteFilePath)
