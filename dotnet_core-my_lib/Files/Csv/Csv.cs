@@ -76,20 +76,28 @@ namespace dotnet_core_my_lib.Files.Csv
                         break;
 
                     string line = reader.ReadLine() ?? "";
+
+                    // 以下の処理は「行内の全列を1列としてソートする」用です、それ以外は末尾で再度トリムされます。
+                    // 全体ソートする前にトリムする必要があるからです。
+                    // 行をセルに分割しトリムをして再度結合することで、余分な空白を削除する
+                    string[] cells = line.Split(',').Select(field => field.Trim()).ToArray();
+                    line = string.Join(",", cells);
+
                     lines.Add(line);
                     lineCount++;
                 }
             }
 
-            var result = new List<ImmutableArray<string>>();
             if (行内の全列を1列としてソートする)
             {
                 lines.Sort();
             }
 
+            var result = new List<ImmutableArray<string>>();
+            // 「行群列」の一次元配列を「行群セル群」の二次元配列にして返します。
             foreach (var line in lines)
             {
-                var fields = line.Split(',').Select(field => field.Trim()).ToImmutableArray();
+                ImmutableArray<string> fields = line.Split(',').Select(field => field.Trim()).ToImmutableArray();
                 result.Add(fields);
             }
 
