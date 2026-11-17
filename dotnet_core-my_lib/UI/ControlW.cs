@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +9,34 @@ namespace dotnet_core_my_lib.UI
 {
     public class ControlW
     {
+        /// <summary>
+        /// 永遠の課題だったので作成しました。
+        /// 感動するくらいに実績ありです。
+        /// TabIndexの仕様として、コントロール毎に独立しています。
+        /// 例）panel1とpanel2自体には親のフォームのTabIndexが割り振られますが、panel1の子コントロールとpanel2の子コントロールは独立してTabIndexが割り振られます。
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="丸めのpixel">コントロールの標準高さが20から24ピクセルなのでこの間で丸めると良い結果になります。
+        /// 逆に0にすると人の手による少しの誤差でindexが崩れます。</param>
+        public static void TabIndexを原点から横方向を優先とし次に縦方向に再帰的に割り振りなおす(Control parent, int 丸めのpixel = 24)
+        {   
+            var controls = parent.Controls
+                .Cast<Control>()
+                //.Where(c => c.TabStop)    // パネルが無視されますのでコメントアウト（ラジオボタンはパネルに入れるのが王道）
+                .OrderBy(c => c.Top / 丸めのpixel)
+                .ThenBy(c => c.Left);
+
+
+            int index = 0;
+
+            foreach (var c in controls)
+            {
+                c.TabIndex = index++;
+                if (c.HasChildren)
+                    TabIndexを原点から横方向を優先とし次に縦方向に再帰的に割り振りなおす(c);
+            }
+        }
+
         /// <summary>
         /// 指定されたコントロールを複製し、名前にサフィックスを追加します。子コントロールも再帰的にコピーされます。
         /// </summary>
