@@ -8,6 +8,12 @@ namespace dotnet_core_my_lib.UI
 {
     public class フォーカスすると全選択する日付対応テキストボックス : フォーカスすると全選択するテキストボックス
     {
+        public フォーカスすると全選択する日付対応テキストボックス()
+        {
+            TextAlign = HorizontalAlignment.Center;
+            MaxLength = 10; // yyyy/MM/dd の長さ
+        }
+
         protected override void OnLeave(EventArgs e)
         {
             base.OnLeave(e);

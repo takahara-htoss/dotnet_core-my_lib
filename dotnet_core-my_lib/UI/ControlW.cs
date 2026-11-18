@@ -9,6 +9,38 @@ namespace dotnet_core_my_lib.UI
 {
     public class ControlW
     {
+        public static void 再帰的にコントロールの入力をクリアする(Control parent)
+        {
+            foreach (Control c in parent.Controls)
+            {
+                if (c is TextBox textBox)
+                {
+                    textBox.Text = string.Empty;
+                }
+                else if (c is ComboBox comboBox)
+                {
+                    comboBox.SelectedIndex = -1; // 選択を解除
+                }
+                else if (c is CheckBox checkBox)
+                {
+                    checkBox.Checked = false; // チェックを解除
+                }
+                else if (c is RadioButton radioButton)
+                {
+                    radioButton.Checked = false; // チェックを解除
+                }
+                else if (c is DateTimePicker dateTimePicker)
+                {
+                    dateTimePicker.Value = DateTime.Now; // デフォルト値に戻す
+                }
+                // 子コントロールがある場合は再帰的に呼び出す
+                if (c.HasChildren)
+                {
+                    再帰的にコントロールの入力をクリアする(c);
+                }
+            }
+        }
+
         /// <summary>
         /// 永遠の課題だったので作成しました。
         /// 感動するくらいに実績ありです。
