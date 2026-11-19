@@ -138,8 +138,6 @@ namespace dotnet_core_my_lib.Files.Ftp
         /// </summary>
         public void DeleteFile(string remoteFilePath)
         {
-            throw new Exception("このシステムではCSVファイルの削除制御は無くなりました。");
-
             if (!_ftpClient.IsConnected)
             {
                 _ftpClient.AutoConnect();
